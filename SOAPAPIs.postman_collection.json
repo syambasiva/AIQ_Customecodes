@@ -1,0 +1,39 @@
+{
+	"info": {
+		"_postman_id": "654308dc-f450-47fc-be2f-f95aed49b6b7",
+		"name": "SOAPAPIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\r\n  <soap12:Body>\r\n    <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\r\n      <Celsius>20</Celsius>\r\n    </CelsiusToFahrenheit>\r\n  </soap12:Body>\r\n</soap12:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://www.w3schools.com/xml/tempconvert.asmx",
+					"protocol": "https",
+					"host": [
+						"www",
+						"w3schools",
+						"com"
+					],
+					"path": [
+						"xml",
+						"tempconvert.asmx"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

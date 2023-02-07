@@ -1,0 +1,2 @@
+import os
+c=os.system('cmd /k "python UpdatedZephyr.py -AIQ_url https://sonata.autonomiq.ai/platform -AIQ_user testadmin -AIQ_pass testadmin1234 -Zephyrebaseurl https://prod-api.zephyr4jiracloud.com/connect -Zephyre_Accountid 5fbb6f2acbead5006917e2d8 -Zephyre_accesskey YzRmMWRlM2ItY2M1ZS0zMjcwLTk5MmUtYjQ0MjVhZDZjNzFlIDVmYmI2ZjJhY2JlYWQ1MDA2OTE3ZTJkOCBVU0VSX0RFRkFVTFRfTkFNRQ -Zephyre_secretkey m2143WjBOMJMOFqq1wLQvCExbU55vPBDLv5GozZPzVE -csvpath "C:\\Users\\samba\\PycharmProjects\\ZephyreIntegration\\ZephyreIntegration.csv""')
