@@ -1,0 +1,141 @@
+import argparse
+import requests
+import json
+import docx
+
+
+
+class UpdateStatusofjob:
+    def __init__(self, kwargs):
+        self.platformurl = kwargs.get("platformurl")
+        self.username = kwargs.get("username")
+        self.password = kwargs.get("password")
+        self.AIQsuiteId = kwargs.get("suiteid")
+        self.AIQ_AccountId = kwargs.get("AccountId")
+        self.AIQ_ProjectId = kwargs.get("projectId")
+        self.Executionmode = kwargs.get("executionmode")
+
+
+    def downloadScreenshot(self):
+        url = "{}/v1/auth".format(self.platformurl)
+
+        payload = json.dumps({
+            "username": self.username,
+            "password": self.password
+        })
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic YXBwdXNlcjphcHBAMTIzIQ=='
+        }
+        response = requests.request("POST", url, headers=headers, data=payload)
+        assert (response.status_code == 200), "error:Message Tokengeneration in ONE_TO_MANY{} ".format(response.text)
+        ##print(response.text)
+        tokenres = json.loads(response.text)['token']
+
+
+        url = "{}/testSuites/{}/{}/getTestSuites".format(self.platformurl, self.AIQ_AccountId, self.AIQ_ProjectId)
+        payload = {}
+        headers = {
+            'Authorization': 'Bearer ' + tokenres
+        }
+        response = requests.request("GET", url, headers=headers, data=payload)
+
+        resp = (response.text)
+        d = json.loads(resp)
+
+        for i in d:
+            if (i['testSuiteId'] == self.AIQsuiteId):
+                name = (i['testSuiteName'])
+
+        url = "{}/v1/testsuite/{}/execute".format(self.platformurl,self.AIQsuiteId)
+
+        payload = json.dumps({
+            "executionMode": self.Executionmode,
+            "executionType": "smoke",
+            "platformBrowserDetails": [
+                {
+                    "environmentType": "local",
+                    "platform": "Linux",
+                    "platformVersion": "",
+                    "browser": "chrome",
+                    "browserVersion": "75.0",
+                    "map": {
+                        "766": "Vzjc04bng"
+                    }
+                }
+            ]
+        })
+        headers = {
+            'Authorization': 'Bearer ' + tokenres,
+            'Content-Type': 'application/json'
+        }
+
+        response1 = requests.request("POST", url, headers=headers, data=payload)
+        job_ID=json.loads(response1.text)['job_id'][0]
+
+
+        url = "{}/v1/jobs/{}/get_status".format(self.platformurl,job_ID)
+
+        payload = {}
+        headers = {
+            'Authorization': 'Bearer ' + tokenres
+        }
+
+        response2 = requests.request("GET", url, headers=headers, data=payload)
+
+        Suite_Status=json.loads(response2.text)
+        Suite_Status1=Suite_Status['job_execution_status']
+
+
+        while (Suite_Status1 == 'INPROGRESS'):
+            url = "{}/v1/jobs/{}/get_status".format(self.platformurl, job_ID)
+
+            payload = {}
+            headers = {
+                'Authorization': 'Bearer ' + tokenres
+            }
+
+            response2 = requests.request("GET", url, headers=headers, data=payload)
+
+            Suite_Status = json.loads(response2.text)
+            Suite_Status1 = Suite_Status['job_execution_status']
+
+        return Suite_Status1
+
+
+def argument_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-AIQ_url", "--platformurl", type=str,
+                        help="Please provide autonomiq server url")
+
+    parser.add_argument("-AIQ_user", "--username", type=str,
+                        help="Please provide Autonomiq username", default='appuser')
+
+    parser.add_argument("-AIQ_pass", "--password", type=str,
+                        help="Please provide Autonomiq password", default='app123')
+
+    parser.add_argument("-AIQ_suite_id", "--suiteid", type=int,
+                        help="Please provide account suiteId")
+
+    parser.add_argument("-AIQ_AccountId", "--AccountId", type=int,
+                        help="Please provide account account id")
+
+    parser.add_argument("-AIQ_ProjectId", "--projectId", type=int,
+                        help="Please provide account projectId")
+
+    parser.add_argument("-AIQ_Executionmode", "--executionmode", type=str,
+                        help="Please provide executionmode")
+
+    args = parser.parse_args()
+    return args.__dict__
+
+if __name__ == '__main__':
+    c=UpdateStatusofjob(argument_parser()).downloadScreenshot()
+    print(c)
+
+    """for i in c:
+        if os.path.exists(i):
+            os.remove(i)"""
+
+
+##python Adobe_PipelineIntegration.py -AIQ_url https://adobe.autonomiq.ai/platform -AIQ_user adobeadmin -AIQ_pass Adobeadmin@123 -AIQ_suite_id 14 -AIQ_AccountId 2 -AIQ_ProjectId 4 -AIQ_Executionmode serial
