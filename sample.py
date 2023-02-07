@@ -1,14 +1,12 @@
-import json
+import requests
 
-def splitcode():
-    c= "mohini|raju|John"
-    value=c.split("|")
-    result = []
-    for i in value:
-        result.append({"name": i,"DOB":i})
-        json_string = json.dumps(result)
-    return json_string
+url = "https://api.imgur.com/3/account/me/images"
 
-c= splitcode()
-print(c)
+payload={}
+headers = {
+  'Authorization': 'Bearer a0bf5ad29f3c62e1ec5d613a0933d4e19b931e73'
+}
 
+response = requests.request("GET", url, headers=headers, data=payload)
+
+print(response.text)
